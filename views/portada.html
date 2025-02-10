@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: #f8f9fa;
+        }
+        .card {
+            height: 100%;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .checked {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Tienda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <form class="d-flex ms-auto me-3" action="/buscar" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar productos" aria-label="Buscar">
+                    <button class="btn btn-outline-success" type="submit">Buscar</button>
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Categorías
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="categoriasDropdown">
+                            {% for categoria in categorias %}
+                                <li><a class="dropdown-item" href="/categoria/{{ categoria }}">{{ categoria }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrito">Carrito</a>
+                    </li>
+                    <li class="nav-item">
+                        <!-- Botón que cambia entre "Identificarse" y "Salir" -->
+                        {% if isAuthenticated %}
+                            <a class="nav-link" href="/logout">Salir</a>
+                        {% else %}
+                            <a class="nav-link" href="/login">Identificarse</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="row">
+            {% for producto in productos %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ producto.image }}" class="card-img-top" alt="{{ producto.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>{{ producto.title }}</strong></h5>
+                            <p class="card-text">{{ producto.price }}€</p>
+
+                            {% if isAdmin %}
+                                <!-- Formulario solo visible para admins -->
+                                <form action="/productos/editar/{{ producto._id }}" method="POST">
+                                    <div class="mb-2">
+                                        <input type="text" name="title" class="form-control" value="{{ producto.title }}" placeholder="Nuevo título">
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="number" name="price" class="form-control" value="{{ producto.price }}" placeholder="Nuevo precio">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                </form>
+                            {% endif %}
+
+                            <button type="button" class="btn btn-outline-primary mt-auto" data-bs-toggle="modal" data-bs-target="#productoModal{{ producto.id }}">
+                                Ver producto
+                            </button>
+                            <span class="stars" data-_id="{{ producto._id }}">
+                                Cargando ratings...
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto -->
+                <div class="modal fade" id="productoModal{{ producto.id }}" tabindex="-1" aria-labelledby="productoModalLabel{{ producto.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productoModalLabel{{ producto.id }}">{{ producto.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ producto.image }}" class="img-fluid mb-3" alt="{{ producto.title }}">
+                                <p><strong>Descripción:</strong> {{ producto.description }}</p>
+                                <p><strong>Precio:</strong> {{ producto.price }}€</p>
+                            </div>
+                            <div class="modal-footer">
+                                <form action="/carrito/add/{{ producto.id }}" method="POST">
+                                    <input type="hidden" name="title" value="{{ producto.title }}">
+                                    <input type="hidden" name="price" value="{{ producto.price }}">
+                                    <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="/js/ratings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

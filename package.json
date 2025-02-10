@@ -1,0 +1,35 @@
+{
+    "name": "Practica2",
+    "version": "1.0",
+    "author": "Yo",
+    "description": "Para llenar la BD con datos de prueba",
+    "main": "seed.js",
+    "type": "module",
+    "scripts": {
+        "seed": "node  --env-file=.env seed.js",
+        "winter": "node  --env-file=.env winter.js",
+        "resenas": "node  --env-file=.env resenas.js",
+        "joyeria": "node  --env-file=.env joyeria.js",
+        "mayor_cien": "node  --env-file=.env mayor_cien.js",
+        "media_categoria": "node  --env-file=.env media_categoria.js",
+        "password": "node  --env-file=.env password.js",
+        "descarga": "node  --env-file=.env descarga.js"
+    },
+    "dependencies": {
+        "axios": "^1.7.7",
+        "body-parser": "^1.20.3",
+        "chokidar": "^3.6.0",
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.1",
+        "express-session": "^1.18.1",
+        "fs": "^0.0.1-security",
+        "jsonwebtoken": "^9.0.2",
+        "mongodb": "^6.9.0",
+        "mongoose": "^8.7.1",
+        "nunjucks": "^3.2.4"
+    },
+    "devDependencies": {
+        "@types/node": "^22.7.2"
+    }
+}
